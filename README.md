@@ -1,1 +1,1 @@
-# pixilization
+# Master of Pixelization
