@@ -19,10 +19,9 @@ int main (void) {
     }
 
     srand(time(NULL));
-    int x = rand() % W;
-    int y = rand() % H;
-
-    MAP[y][x] = 1;
+    int X = rand() % W;
+    int Y = rand() % H;
+    MAP[Y][X] = 1;
 
     while (1) {
         pico_output_clear();
@@ -35,9 +34,10 @@ int main (void) {
         }
         pico_output_present();
 
+        int timeout;
         {
             SDL_Event e;
-            pico_input_event_timeout(&e, SDL_ANY, 2000);
+            timeout = !pico_input_event_timeout(&e, SDL_ANY, 1000);
             if (e.type == SDL_QUIT) {
                 break;
             }
@@ -47,6 +47,20 @@ int main (void) {
                     break;
             }
             */
+        }
+
+        if (timeout) {
+            int x = -1;
+            while (x<0 || x>=W) {
+                x = X + sqrt(rand() % W/2) * (rand()%2==1 ? 1 : -1);
+            }
+
+            int y = -1;
+            while (y<0 || y>=H) {
+                y = Y + sqrt(rand() % H/2) * (rand()%2==1 ? 1 : -1);
+            }
+
+            MAP[y][x] = 1;
         }
     }
 
