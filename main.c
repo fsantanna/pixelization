@@ -25,6 +25,7 @@ int main (void) {
 
     while (1) {
         pico_output_clear();
+        pico_set_color_draw((Pico_Color){0xFF,0xFF,0xFF,0xFF});
         for (int l=0; l<H; l++) {
             for (int c=0; c<W; c++) {
                 if (MAP[l][c] != 0) {
@@ -32,6 +33,8 @@ int main (void) {
                 }
             }
         }
+        pico_set_color_draw((Pico_Color){0xFF,0xFF,0x00,0xFF});
+        pico_output_draw_pixel((Pico_Pos){X,Y});
         pico_output_present();
 
         int timeout;
@@ -50,17 +53,27 @@ int main (void) {
         }
 
         if (timeout) {
+            static int D[15] = {
+                0, 0, 0, 0, 0,
+                1, 1, 1, 1,
+                2, 2, 2,
+                3, 3,
+                4
+            };
             int x = -1;
-            while (x<0 || x>=W) {
-                x = X + sqrt(rand() % W/2) * (rand()%2==1 ? 1 : -1);
-            }
-
             int y = -1;
-            while (y<0 || y>=H) {
-                y = Y + sqrt(rand() % H/2) * (rand()%2==1 ? 1 : -1);
+            while (x<0 || y<0 || x>=W || y>=H || MAP[y][x]==1) {
+                // TODO: assert available position
+                x = X + D[rand()%15] * (rand()%2==1 ? 1 : -1);
+                y = Y + D[rand()%15] * (rand()%2==1 ? 1 : -1);
             }
-
             MAP[y][x] = 1;
+
+            X = Y = -1;
+            while (X<0 || X<0 || MAP[Y][X]==0) {
+                X = rand() % W;
+                Y = rand() % H;
+            }
         }
     }
 
