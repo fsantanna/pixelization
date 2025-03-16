@@ -6,6 +6,8 @@
 
 static char MAP[W][H];
 
+#include "art.c"
+
 int main (void) {
     pico_init(1);
     pico_set_size((Pico_Dim){5*W,5*H}, (Pico_Dim){W,H});
@@ -25,6 +27,7 @@ int main (void) {
 
     while (1) {
         pico_output_clear();
+        pico_output_draw_buffer((Pico_Pos){X,Y}, tower_buf, tower_dim);
         pico_set_color_draw((Pico_Color){0xFF,0xFF,0xFF,0xFF});
         for (int l=0; l<H; l++) {
             for (int c=0; c<W; c++) {
