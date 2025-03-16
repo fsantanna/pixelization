@@ -7,6 +7,7 @@
 static char MAP[W][H];
 
 #include "art.c"
+#include "map.c"
 
 int main (void) {
     pico_init(1);
