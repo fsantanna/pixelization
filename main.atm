@@ -1,0 +1,75 @@
+require "atmos.env.pico"
+
+val X    = require "atmos.x"
+val pico = require "pico"
+val art  = require "art"
+val map  = require "map"
+
+func between (min, v, max) {
+    ifs {
+        v < min => min
+        v > max => max
+        else    => v
+    }
+}
+
+val W = 50
+val H = 50
+
+val MAP = @{}
+
+pico.zet.title("Master of Pixelization");
+pico.zet.size.window(@{x=5*W,y=5*H}, @{x=W,y=H})
+pico.zet.expert(true);
+
+loop l in H {
+    set MAP[l] = @{}
+    loop c in W {
+        set MAP[l][c] = false
+    }
+}
+
+math.randomseed()
+
+val POS = @{
+    x = math.random(W),
+    y = math.random(H),
+}
+
+set MAP[POS.x][POS.y] = true
+
+par {
+    every :draw {
+        pico.zet.anchor.draw(:left, :top)
+        pico.output.draw.buffer(@{x=0,y=0}, map)
+        pico.zet.anchor.draw(:center, :middle)
+
+        pico.output.draw.buffer(POS, art.tower)
+
+        pico.zet.color.draw(pico.color.white)
+        loop l in H {
+            loop c in W {
+                if MAP[l][c] {
+                    pico.output.draw.pixel(c, l)
+                }
+            }
+        }
+        pico.zet.color.draw(pico.color.yellow)
+        pico.output.draw.pixel(POS)
+    }
+} with {
+    val D = @{
+        0, 0, 0, 0, 0,
+        1, 1, 1, 1,
+        2, 2, 2,
+        3, 3,
+        4
+    }
+    every @1 {
+        val dx = math.random(#D) * math.random(-1,1)
+        val dy = math.random(#D) * math.random(-1,1)
+        set POS.x = between(1, POS.x+dx, W)
+        set POS.y = between(1, POS.y+dy, H)
+        set MAP[POS.y][POS.x] = true;
+    }
+}

@@ -1,0 +1,13 @@
+val pico = require "pico"
+
+val ___ = @{ r=0,g=0,b=0 }
+val WHI = pico.color.white
+
+@{
+    tower = @{
+        @{ ___, WHI, WHI, ___ },
+        @{ WHI, WHI, WHI, WHI },
+        @{ WHI, WHI, WHI, WHI },
+        @{ ___, WHI, WHI, ___ },
+    },
+}
