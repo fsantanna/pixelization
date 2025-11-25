@@ -29,10 +29,10 @@ int main (void) {
     while (1) {
         pico_output_clear();
 
-        pico_set_anchor(PICO_LEFT, PICO_TOP);
+        pico_set_anchor_draw((Pico_Anchor){PICO_LEFT, PICO_TOP});
         pico_output_draw_buffer((Pico_Pos){0,0}, map_buf, map_dim);
 
-        pico_set_anchor(PICO_CENTER, PICO_MIDDLE);
+        pico_set_anchor_draw((Pico_Anchor){PICO_CENTER, PICO_MIDDLE});
         pico_output_draw_buffer((Pico_Pos){X,Y}, tower_buf, tower_dim);
         pico_set_color_draw((Pico_Color){0xFF,0xFF,0xFF,0xFF});
         for (int l=0; l<H; l++) {
@@ -49,7 +49,7 @@ int main (void) {
         int timeout;
         {
             SDL_Event e;
-            timeout = !pico_input_event_timeout(&e, SDL_ANY, 1000);
+            timeout = !pico_input_event_timeout(&e, PICO_ANY, 1000);
             if (e.type == SDL_QUIT) {
                 break;
             }
