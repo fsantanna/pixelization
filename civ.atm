@@ -1,0 +1,40 @@
+val X    = require "atmos.x"
+val pico = require "pico"
+val art  = require "art"
+
+func (clr, pos) {
+    val tower = @{}
+    do {
+        loop l,L in art.tower {
+            set tower[l] = @{}
+            loop c,C in L {
+                set tower[l][c] = C
+                if C == pico.color.white {
+                    set tower[l][c] = pico.color[clr]
+                }
+            }
+        }
+    }
+    par {
+        val pos = X.copy(pos)
+        every :draw {
+            pico.output.draw.buffer(pos, tower)
+        }
+    } with {
+        val D = @{
+            0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0,
+            1, 1, 1, 1,
+            2, 2, 2,
+            3, 3,
+            4
+        }
+        every :turn {
+            val dx = D[math.random(#D)] * math.random(-1,1)
+            val dy = D[math.random(#D)] * math.random(-1,1)
+            set pos.x = between(1, pos.x+dx, W)
+            set pos.y = between(1, pos.y+dy, H)
+            set MAP[pos.y][pos.x] = clr
+        }
+    }
+}

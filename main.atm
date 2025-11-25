@@ -4,6 +4,7 @@ val X    = require "atmos.x"
 val pico = require "pico"
 val art  = require "art"
 val map  = require "map"
+val Civ  = require "civ"
 
 func between (min, v, max) {
     ifs {
@@ -13,63 +14,54 @@ func between (min, v, max) {
     }
 }
 
-val W = 50
-val H = 50
-
-val MAP = @{}
+set W = 50
+set H = 50
 
 pico.zet.title("Master of Pixelization");
 pico.zet.size.window(@{x=5*W,y=5*H}, @{x=W,y=H})
 pico.zet.expert(true);
 
+set MAP = @{}
 loop l in H {
     set MAP[l] = @{}
     loop c in W {
-        set MAP[l][c] = false
+        set MAP[l][c] = nil
     }
 }
 
 math.randomseed()
 
-val POS = @{
-    x = math.random(W),
-    y = math.random(H),
-}
-
-set MAP[POS.x][POS.y] = true
-
-par {
+spawn {
     every :draw {
         pico.zet.anchor.draw(:left, :top)
         pico.output.draw.buffer(@{x=0,y=0}, map)
         pico.zet.anchor.draw(:center, :middle)
 
-        pico.output.draw.buffer(POS, art.tower)
-
-        pico.zet.color.draw(pico.color.white)
         loop l in H {
             loop c in W {
-                if MAP[l][c] {
+                val clr = MAP[l][c]
+                if clr {
+                    pico.zet.color.draw(pico.color[clr])
                     pico.output.draw.pixel(c, l)
                 }
             }
         }
-        pico.zet.color.draw(pico.color.yellow)
-        pico.output.draw.pixel(POS)
     }
-} with {
-    val D = @{
-        0, 0, 0, 0, 0,
-        1, 1, 1, 1,
-        2, 2, 2,
-        3, 3,
-        4
-    }
-    every @1 {
-        val dx = math.random(#D) * math.random(-1,1)
-        val dy = math.random(#D) * math.random(-1,1)
-        set POS.x = between(1, POS.x+dx, W)
-        set POS.y = between(1, POS.y+dy, H)
-        set MAP[POS.y][POS.x] = true;
-    }
+}
+
+val ps = @{
+    green = pico.pos(20,20),
+    white = pico.pos(80,20),
+    blue  = pico.pos(50,50),
+    black = pico.pos(20,80),
+    red   = pico.pos(80,80),
+}
+
+pin civs = tasks(5)
+loop clr, pos in ps {
+    spawn [civs] Civ(clr, pos)
+}
+
+every @1 {
+    emit [:global] :turn
 }
